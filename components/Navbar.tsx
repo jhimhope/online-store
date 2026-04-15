@@ -6,6 +6,7 @@ import { User, ChevronDown, Package, Settings, LogOut } from 'lucide-react'
 import { useAuth } from './AuthProvider'
 import CartIcon from './CartIcon'
 import SearchBar from './SearchBar'
+// Force rebuild
 
 export default function Navbar() {
   const { user, signOut } = useAuth()
