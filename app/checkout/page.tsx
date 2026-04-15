@@ -18,6 +18,7 @@ export default function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('cod')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [orderPlaced, setOrderPlaced] = useState(false)
+  const [error, setError] = useState('')
   
   const [formData, setFormData] = useState({
     firstName: '',
