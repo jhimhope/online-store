@@ -184,7 +184,7 @@ export default function CheckoutPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
-                    First Name *
+                    First Name <span className="text-red-600">*</span>
                   </label>
                   <input
                     type="text"
@@ -193,12 +193,12 @@ export default function CheckoutPage() {
                     required
                     value={formData.firstName}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500"
                   />
                 </div>
                 <div>
                   <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">
-                    Last Name *
+                    Last Name <span className="text-red-600">*</span>
                   </label>
                   <input
                     type="text"
@@ -207,7 +207,7 @@ export default function CheckoutPage() {
                     required
                     value={formData.lastName}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500"
                   />
                 </div>
                 <div>
@@ -221,12 +221,12 @@ export default function CheckoutPage() {
                     required
                     value={formData.email}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500"
                   />
                 </div>
                 <div>
                   <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-                    Phone *
+                    Phone <span className="text-red-600">*</span>
                   </label>
                   <input
                     type="tel"
@@ -235,12 +235,12 @@ export default function CheckoutPage() {
                     required
                     value={formData.phone}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500"
                   />
                 </div>
                 <div className="md:col-span-2">
                   <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
-                    Address *
+                    Address <span className="text-red-600">*</span>
                   </label>
                   <input
                     type="text"
@@ -249,7 +249,7 @@ export default function CheckoutPage() {
                     required
                     value={formData.address}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500"
                   />
                 </div>
                 <div>
