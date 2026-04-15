@@ -2,7 +2,6 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-// Middleware for Supabase authentication
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next()
 
@@ -14,15 +13,16 @@ export async function middleware(req: NextRequest) {
         getAll() {
           return req.cookies.getAll()
         },
-        setAll(cookiesToSet: Array<{ name: string; value: string; options?: any }>) {
-          cookiesToSet.forEach(({ name, value, options }) => req.cookies.set(name, value))
+        setAll(cookiesToSet: any) {
+          cookiesToSet.forEach(({ name, value }: any) => {
+            req.cookies.set(name, value)
+          })
           res.cookies.setAll(cookiesToSet)
         },
       },
     }
   )
 
-  // Refresh session if expired
   await supabase.auth.getSession()
 
   return res
