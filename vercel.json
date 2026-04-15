@@ -3,5 +3,8 @@
   "devCommand": "npm run dev",
   "installCommand": "npm install",
   "framework": "nextjs",
-  "outputDirectory": ".next"
+  "outputDirectory": ".next",
+  "env": {
+    "VERCEL_FORCE_NO_BUILD_CACHE": "1"
+  }
 }
