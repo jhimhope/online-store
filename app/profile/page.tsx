@@ -173,12 +173,19 @@ export default function ProfilePage() {
                 </div>
 
                 {isEditing && (
-                  <div className="mt-6">
+                  <div className="mt-6 flex gap-3">
                     <button
                       type="submit"
-                      className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700"
+                      className="px-6 py-2 bg-primary-600 text-white font-medium rounded-md hover:bg-primary-700"
                     >
                       Save Changes
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setIsEditing(false)}
+                      className="px-6 py-2 bg-gray-300 text-gray-700 font-medium rounded-md hover:bg-gray-400"
+                    >
+                      Cancel
                     </button>
                   </div>
                 )}
