@@ -6,7 +6,7 @@ export default function Hero() {
       <div className="container mx-auto px-4 py-24">
         <div className="text-center">
           <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
-            Welcome to Our Online Store
+            Welcome to Fronda Online Store
           </h1>
           <p className="text-xl text-primary-100 mb-10 max-w-2xl mx-auto">
             Discover amazing products at unbeatable prices. Shop with confidence and convenience.

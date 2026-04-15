@@ -83,7 +83,7 @@ export default function ProfilePage() {
                       value={profileData.firstName}
                       onChange={handleChange}
                       disabled={!isEditing}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:bg-gray-50"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:bg-gray-50 disabled:text-gray-700"
                     />
                   </div>
                   <div>
@@ -97,7 +97,7 @@ export default function ProfilePage() {
                       value={profileData.lastName}
                       onChange={handleChange}
                       disabled={!isEditing}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:bg-gray-50"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:bg-gray-50 disabled:text-gray-700"
                     />
                   </div>
                   <div className="md:col-span-2">
@@ -111,7 +111,7 @@ export default function ProfilePage() {
                       value={profileData.email}
                       onChange={handleChange}
                       disabled={!isEditing}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:bg-gray-50"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:bg-gray-50 disabled:text-gray-700"
                     />
                   </div>
                   <div>
@@ -125,7 +125,7 @@ export default function ProfilePage() {
                       value={profileData.phone}
                       onChange={handleChange}
                       disabled={!isEditing}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:bg-gray-50"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:bg-gray-50 disabled:text-gray-700"
                     />
                   </div>
                   <div className="md:col-span-2">
@@ -139,7 +139,7 @@ export default function ProfilePage() {
                       value={profileData.address}
                       onChange={handleChange}
                       disabled={!isEditing}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:bg-gray-50"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:bg-gray-50 disabled:text-gray-700"
                     />
                   </div>
                   <div>
@@ -153,7 +153,7 @@ export default function ProfilePage() {
                       value={profileData.city}
                       onChange={handleChange}
                       disabled={!isEditing}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:bg-gray-50"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:bg-gray-50 disabled:text-gray-700"
                     />
                   </div>
                   <div>
@@ -167,7 +167,7 @@ export default function ProfilePage() {
                       value={profileData.zipCode}
                       onChange={handleChange}
                       disabled={!isEditing}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:bg-gray-50"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:bg-gray-50 disabled:text-gray-700"
                     />
                   </div>
                 </div>
