@@ -19,6 +19,10 @@ export default function CheckoutPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [orderPlaced, setOrderPlaced] = useState(false)
   const [error, setError] = useState('')
+
+  const shippingCost = 5.00
+  const tax = totalPrice * 0.08
+  const orderTotal = totalPrice + shippingCost + tax
   
   const [formData, setFormData] = useState({
     firstName: '',
@@ -166,10 +170,6 @@ export default function CheckoutPage() {
       </div>
     )
   }
-
-  const shippingCost = 5.00
-  const tax = totalPrice * 0.08
-  const orderTotal = totalPrice + shippingCost + tax
 
   return (
     <div className="container mx-auto px-4 py-8">
