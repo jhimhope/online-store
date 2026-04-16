@@ -6,7 +6,6 @@ import { useAuth } from '@/components/AuthProvider'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import StripePayment from '@/components/StripePayment'
-import EmailNotification from '@/components/EmailNotification'
 import { useEffect } from 'react'
 
 type PaymentMethod = 'cod' | 'card' | 'paypal'
@@ -226,79 +225,67 @@ export default function CheckoutPage() {
   if (orderPlaced) {
     return (
       <div className="container mx-auto px-4 py-16">
-        <div className="max-w-lg mx-auto text-center">
-          <div className="mb-6">
+        <div className="max-w-lg mx-auto">
+          {/* Success Icon */}
+          <div className="text-center mb-8">
             <div className="h-16 w-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <svg className="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
             <h2 className="text-3xl font-bold text-gray-900 mb-2">Order Placed Successfully!</h2>
-            <p className="text-gray-600 mb-6">
-              Thank you for your order. {paymentMethod === 'cod' ? 'Your order will be shipped soon. Please have cash ready for delivery.' : 'Your payment has been processed successfully.'}
+            <p className="text-gray-600">
+              Thank you for your order. {paymentMethod === 'cod' ? 'Please have cash ready for delivery.' : 'Your payment has been processed.'}
             </p>
           </div>
-          
+
+          {/* Order Details */}
           <div className="bg-white rounded-lg shadow-md p-6 mb-6">
             <h3 className="text-lg font-medium text-gray-900 mb-4">Order Details</h3>
-            <div className="space-y-2 text-left">
+            <div className="space-y-2">
               <div className="flex justify-between">
                 <span className="text-gray-700 font-medium">Order Number:</span>
                 <span className="font-medium text-gray-900">{orderNumber}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-700 font-medium">Payment Method:</span>
+                <span className="text-gray-700 font-medium">Payment:</span>
                 <span className="font-medium text-gray-900">
-                  {paymentMethod === 'cod' ? 'Cash on Delivery' : 
-                   paymentMethod === 'card' ? 'Credit Card' : 'PayPal'}
+                  {paymentMethod === 'cod' ? 'Cash on Delivery' : paymentMethod === 'card' ? 'Credit Card' : 'PayPal'}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-700 font-medium">Total Amount:</span>
-                <span className="font-medium text-gray-900">₱{(totalPrice + 5 + (totalPrice * 0.08)).toFixed(2)}</span>
+                <span className="text-gray-700 font-medium">Total:</span>
+                <span className="font-medium text-gray-900">₱{orderTotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-700 font-medium">Shipping Address:</span>
-                <span className="font-medium text-gray-900 text-right">{formData.address}, {formData.city}, {formData.zipCode}</span>
+                <span className="text-gray-700 font-medium">Address:</span>
+                <span className="font-medium text-gray-900 text-right">{formData.address}, {formData.city}</span>
               </div>
-            </div>
-          </div>
-          
-          <div className="space-y-6">
-            <div className="bg-white rounded-lg shadow-md p-6 relative z-20">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">What's Next?</h3>
-              <div className="space-y-3">
-                <button
-                  onClick={() => router.push('/products')}
-                  className="block w-full text-center px-6 py-3 bg-primary-600 text-white font-medium rounded-md hover:bg-primary-700 relative z-20 cursor-pointer"
-                >
-                  Continue Shopping
-                </button>
-                <button
-                  onClick={() => router.push('/orders')}
-                  className="block w-full text-center px-6 py-3 bg-gray-600 text-white font-medium rounded-md hover:bg-gray-700 relative z-20 cursor-pointer"
-                >
-                  View My Orders
-                </button>
-                <button
-                  onClick={() => router.push('/')}
-                  className="block w-full text-center px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-md hover:bg-gray-50 relative z-20 cursor-pointer"
-                >
-                  Back to Home
-                </button>
-              </div>
-              <p className="text-sm text-gray-500 mt-4 text-center">
-                You will receive an email confirmation shortly.
-              </p>
             </div>
           </div>
 
-          <div className="mt-8">
-            <EmailNotification
-              orderNumber={orderNumber}
-              customerEmail={formData.email}
-              totalAmount={orderTotal}
-            />
+          {/* Navigation Buttons */}
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="space-y-3">
+              <a
+                href="/products"
+                className="block w-full text-center px-6 py-3 bg-primary-600 text-white font-medium rounded-md hover:bg-primary-700"
+              >
+                Continue Shopping
+              </a>
+              <a
+                href="/orders"
+                className="block w-full text-center px-6 py-3 bg-gray-600 text-white font-medium rounded-md hover:bg-gray-700"
+              >
+                View My Orders
+              </a>
+              <a
+                href="/"
+                className="block w-full text-center px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-md hover:bg-gray-50"
+              >
+                Back to Home
+              </a>
+            </div>
           </div>
         </div>
       </div>
