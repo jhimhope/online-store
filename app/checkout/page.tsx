@@ -62,6 +62,25 @@ export default function CheckoutPage() {
       setOrderNumber(newOrderNumber)
       
       try {
+        console.log('Submitting order:', {
+          orderNumber: newOrderNumber,
+          paymentMethod: 'cod',
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          phone: formData.phone,
+          address: formData.address,
+          city: formData.city,
+          zipCode: formData.zipCode,
+          country: formData.country,
+          notes: formData.notes,
+          subtotal: totalPrice,
+          shippingCost: shippingCost,
+          tax: tax,
+          total: orderTotal,
+          items: items,
+        })
+
         const response = await fetch('/api/orders', {
           method: 'POST',
           headers: {
@@ -87,9 +106,14 @@ export default function CheckoutPage() {
           }),
         })
 
+        console.log('API Response Status:', response.status)
+        const responseData = await response.json()
+        console.log('API Response Data:', responseData)
+
         if (!response.ok) {
-          const errorData = await response.json()
-          setError(errorData.error || 'Failed to create order')
+          const errorMessage = responseData.error || 'Failed to create order'
+          console.error('Order creation error:', errorMessage)
+          setError(errorMessage)
           setIsSubmitting(false)
           return
         }
@@ -101,7 +125,8 @@ export default function CheckoutPage() {
         }, 1500)
       } catch (err) {
         console.error('Error creating order:', err)
-        setError('Failed to create order. Please try again.')
+        const errorMessage = err instanceof Error ? err.message : 'Failed to create order. Please try again.'
+        setError(errorMessage)
         setIsSubmitting(false)
       }
     }
@@ -282,6 +307,12 @@ export default function CheckoutPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold text-gray-900 mb-8">Checkout</h1>
+      
+      {error && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
+          <p className="text-red-700 font-medium">{error}</p>
+        </div>
+      )}
       
       <div className="grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
