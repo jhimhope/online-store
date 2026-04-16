@@ -161,24 +161,24 @@ export default function CheckoutPage() {
           </div>
           
           <div className="space-y-6">
-            <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="bg-white rounded-lg shadow-md p-6 relative z-20">
               <h3 className="text-lg font-medium text-gray-900 mb-4">What's Next?</h3>
               <div className="space-y-3">
                 <Link
                   href="/products"
-                  className="block w-full text-center px-6 py-3 bg-primary-600 text-white font-medium rounded-md hover:bg-primary-700"
+                  className="block w-full text-center px-6 py-3 bg-primary-600 text-white font-medium rounded-md hover:bg-primary-700 relative z-20"
                 >
                   Continue Shopping
                 </Link>
                 <Link
                   href="/orders"
-                  className="block w-full text-center px-6 py-3 bg-gray-600 text-white font-medium rounded-md hover:bg-gray-700"
+                  className="block w-full text-center px-6 py-3 bg-gray-600 text-white font-medium rounded-md hover:bg-gray-700 relative z-20"
                 >
                   View My Orders
                 </Link>
                 <Link
                   href="/"
-                  className="block w-full text-center px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-md hover:bg-gray-50"
+                  className="block w-full text-center px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-md hover:bg-gray-50 relative z-20"
                 >
                   Back to Home
                 </Link>

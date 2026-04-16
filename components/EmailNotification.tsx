@@ -20,7 +20,7 @@ export default function EmailNotification({ orderNumber, customerEmail, totalAmo
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
+    <div className="bg-white rounded-lg shadow-md p-6 relative z-0">
       <div className="flex items-center mb-6">
         <Mail className="h-6 w-6 text-gray-500 mr-2" />
         <h3 className="text-lg font-medium text-gray-900">Email Notification</h3>
@@ -61,7 +61,7 @@ export default function EmailNotification({ orderNumber, customerEmail, totalAmo
         ) : (
           <button
             onClick={handleSendEmail}
-            className="w-full py-2 px-4 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+            className="w-full py-2 px-4 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 relative z-10"
           >
             Send Test Email
           </button>
