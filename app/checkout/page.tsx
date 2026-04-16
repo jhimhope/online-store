@@ -187,7 +187,9 @@ export default function CheckoutPage() {
                 You will receive an email confirmation shortly.
               </p>
             </div>
-            
+          </div>
+
+          <div className="mt-8">
             <EmailNotification
               orderNumber={orderNumber}
               customerEmail={formData.email}
