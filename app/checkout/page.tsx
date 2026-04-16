@@ -20,6 +20,7 @@ export default function CheckoutPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [orderPlaced, setOrderPlaced] = useState(false)
   const [error, setError] = useState('')
+  const [orderNumber, setOrderNumber] = useState('')
 
   const shippingCost = 5.00
   const tax = totalPrice * 0.08
@@ -57,6 +58,8 @@ export default function CheckoutPage() {
     if (paymentMethod === 'cod') {
       // For COD, just place the order
       setIsSubmitting(true)
+      const newOrderNumber = `ORD-${Date.now().toString().slice(-8)}`
+      setOrderNumber(newOrderNumber)
       setTimeout(() => {
         setIsSubmitting(false)
         setOrderPlaced(true)
@@ -69,6 +72,8 @@ export default function CheckoutPage() {
 
   const handlePaymentSuccess = () => {
     setIsSubmitting(true)
+    const newOrderNumber = `ORD-${Date.now().toString().slice(-8)}`
+    setOrderNumber(newOrderNumber)
     setTimeout(() => {
       setIsSubmitting(false)
       setOrderPlaced(true)
@@ -135,7 +140,7 @@ export default function CheckoutPage() {
             <div className="space-y-2 text-left">
               <div className="flex justify-between">
                 <span className="text-gray-700 font-medium">Order Number:</span>
-                <span className="font-medium text-gray-900">ORD-{Date.now().toString().slice(-8)}</span>
+                <span className="font-medium text-gray-900">{orderNumber}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-700 font-medium">Payment Method:</span>
@@ -169,7 +174,7 @@ export default function CheckoutPage() {
             </div>
             
             <EmailNotification
-              orderNumber={`ORD-${Date.now().toString().slice(-8)}`}
+              orderNumber={orderNumber}
               customerEmail={formData.email}
               totalAmount={orderTotal}
             />
