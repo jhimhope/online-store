@@ -309,12 +309,12 @@ export default function CheckoutPage() {
                   />
                   <label htmlFor="cod" className="ml-3 block text-sm font-medium text-gray-700">
                     <div className="flex items-center">
-                      <span>Cash on Delivery (COD)</span>
+                      <span className="text-gray-900">Cash on Delivery (COD)</span>
                       <span className="ml-2 px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded">
                         Pay when you receive
                       </span>
                     </div>
-                    <p className="text-sm text-gray-500 mt-1">
+                    <p className="text-sm text-gray-600 mt-1">
                       Pay with cash when your order is delivered. No additional fees.
                     </p>
                   </label>
@@ -331,9 +331,9 @@ export default function CheckoutPage() {
                   />
                   <label htmlFor="card" className="ml-3 block text-sm font-medium text-gray-700">
                     <div className="flex items-center">
-                      <span>Credit/Debit Card</span>
+                      <span className="text-gray-900">Credit/Debit Card</span>
                     </div>
-                    <p className="text-sm text-gray-500 mt-1">
+                    <p className="text-sm text-gray-600 mt-1">
                       Pay securely with your credit or debit card
                     </p>
                   </label>
@@ -350,9 +350,9 @@ export default function CheckoutPage() {
                   />
                   <label htmlFor="paypal" className="ml-3 block text-sm font-medium text-gray-700">
                     <div className="flex items-center">
-                      <span>PayPal</span>
+                      <span className="text-gray-900">PayPal</span>
                     </div>
-                    <p className="text-sm text-gray-500 mt-1">
+                    <p className="text-sm text-gray-600 mt-1">
                       Pay securely with your PayPal account
                     </p>
                   </label>
@@ -404,24 +404,22 @@ export default function CheckoutPage() {
             
             <div className="space-y-4">
               <div className="flex justify-between">
-                <span className="text-gray-600">Subtotal ({totalItems} items)</span>
-                <span className="font-medium">${totalPrice.toFixed(2)}</span>
+                <span className="text-gray-700 font-medium">Subtotal ({totalItems} items)</span>
+                <span className="font-medium text-gray-900">${totalPrice.toFixed(2)}</span>
               </div>
               
               <div className="flex justify-between">
-                <span className="text-gray-600">Shipping</span>
-                <span className="font-medium">${shippingCost.toFixed(2)}</span>
+                <span className="text-gray-700 font-medium">Shipping</span>
+                <span className="font-medium text-gray-900">${shippingCost.toFixed(2)}</span>
               </div>
               
-
-              
               <div className="flex justify-between">
-                <span className="text-gray-600">Tax</span>
-                <span className="font-medium">${tax.toFixed(2)}</span>
+                <span className="text-gray-700 font-medium">Tax</span>
+                <span className="font-medium text-gray-900">${tax.toFixed(2)}</span>
               </div>
               
               <div className="border-t pt-4">
-                <div className="flex justify-between text-lg font-bold">
+                <div className="flex justify-between text-lg font-bold text-gray-900">
                   <span>Total</span>
                   <span>${orderTotal.toFixed(2)}</span>
                 </div>
@@ -429,17 +427,17 @@ export default function CheckoutPage() {
             </div>
 
             <div className="mt-6 space-y-4">
-              <div className="text-sm text-gray-500">
-                <p className="mb-2">Items in your order:</p>
+              <div className="text-sm text-gray-700">
+                <p className="mb-2 font-medium">Items in your order:</p>
                 <ul className="space-y-1">
                   {items.slice(0, 3).map(item => (
-                    <li key={item.id} className="flex justify-between">
+                    <li key={item.id} className="flex justify-between text-gray-700">
                       <span className="truncate">{item.name} × {item.quantity}</span>
                       <span>${(item.price * item.quantity).toFixed(2)}</span>
                     </li>
                   ))}
                   {items.length > 3 && (
-                    <li className="text-gray-400">+ {items.length - 3} more items</li>
+                    <li className="text-gray-600">+ {items.length - 3} more items</li>
                   )}
                 </ul>
               </div>
