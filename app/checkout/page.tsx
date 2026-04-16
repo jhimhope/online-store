@@ -56,29 +56,107 @@ export default function CheckoutPage() {
     e.preventDefault()
     
     if (paymentMethod === 'cod') {
-      // For COD, just place the order
+      // For COD, save order to database
       setIsSubmitting(true)
       const newOrderNumber = `ORD-${Date.now().toString().slice(-8)}`
       setOrderNumber(newOrderNumber)
-      setTimeout(() => {
+      
+      try {
+        const response = await fetch('/api/orders', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            orderNumber: newOrderNumber,
+            paymentMethod: 'cod',
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            email: formData.email,
+            phone: formData.phone,
+            address: formData.address,
+            city: formData.city,
+            zipCode: formData.zipCode,
+            country: formData.country,
+            notes: formData.notes,
+            subtotal: totalPrice,
+            shippingCost: shippingCost,
+            tax: tax,
+            total: orderTotal,
+            items: items,
+          }),
+        })
+
+        if (!response.ok) {
+          const errorData = await response.json()
+          setError(errorData.error || 'Failed to create order')
+          setIsSubmitting(false)
+          return
+        }
+
+        setTimeout(() => {
+          setIsSubmitting(false)
+          setOrderPlaced(true)
+          clearCart()
+        }, 1500)
+      } catch (err) {
+        console.error('Error creating order:', err)
+        setError('Failed to create order. Please try again.')
         setIsSubmitting(false)
-        setOrderPlaced(true)
-        clearCart()
-      }, 1500)
+      }
     }
     // For card payments, we'll handle in StripePayment component
     // For PayPal, we'll handle separately
   }
 
-  const handlePaymentSuccess = () => {
+  const handlePaymentSuccess = async () => {
     setIsSubmitting(true)
     const newOrderNumber = `ORD-${Date.now().toString().slice(-8)}`
     setOrderNumber(newOrderNumber)
-    setTimeout(() => {
+    
+    try {
+      const response = await fetch('/api/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          orderNumber: newOrderNumber,
+          paymentMethod: paymentMethod,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          phone: formData.phone,
+          address: formData.address,
+          city: formData.city,
+          zipCode: formData.zipCode,
+          country: formData.country,
+          notes: formData.notes,
+          subtotal: totalPrice,
+          shippingCost: shippingCost,
+          tax: tax,
+          total: orderTotal,
+          items: items,
+        }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        setError(errorData.error || 'Failed to create order')
+        setIsSubmitting(false)
+        return
+      }
+
+      setTimeout(() => {
+        setIsSubmitting(false)
+        setOrderPlaced(true)
+        clearCart()
+      }, 1500)
+    } catch (err) {
+      console.error('Error creating order:', err)
+      setError('Failed to create order. Please try again.')
       setIsSubmitting(false)
-      setOrderPlaced(true)
-      clearCart()
-    }, 1500)
+    }
   }
 
   const handlePaymentError = (error: string) => {

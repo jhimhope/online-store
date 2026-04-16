@@ -3,54 +3,44 @@
 import { Package, CheckCircle, Clock, Truck } from 'lucide-react'
 import { useAuth } from '@/components/AuthProvider'
 import Link from 'next/link'
+import { useState, useEffect } from 'react'
 
 type Order = {
   id: string
-  date: string
-  status: 'delivered' | 'shipped' | 'processing' | 'cancelled'
-  total: number
-  items: number
-  paymentMethod: string
+  order_number: string
+  created_at: string
+  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled'
+  total_amount: number
+  payment_method: string
 }
 
 export default function OrdersPage() {
   const { user } = useAuth()
+  const [orders, setOrders] = useState<Order[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
 
-  // Mock orders data
-  const orders: Order[] = [
-    {
-      id: 'ORD-20240415-001',
-      date: '2024-04-15',
-      status: 'delivered',
-      total: 156.98,
-      items: 3,
-      paymentMethod: 'Cash on Delivery'
-    },
-    {
-      id: 'ORD-20240410-002',
-      date: '2024-04-10',
-      status: 'shipped',
-      total: 89.99,
-      items: 1,
-      paymentMethod: 'Credit Card'
-    },
-    {
-      id: 'ORD-20240405-003',
-      date: '2024-04-05',
-      status: 'processing',
-      total: 245.50,
-      items: 4,
-      paymentMethod: 'PayPal'
-    },
-    {
-      id: 'ORD-20240328-004',
-      date: '2024-03-28',
-      status: 'delivered',
-      total: 67.45,
-      items: 2,
-      paymentMethod: 'Cash on Delivery'
+  useEffect(() => {
+    if (!user) return
+
+    const fetchOrders = async () => {
+      try {
+        const response = await fetch('/api/orders')
+        if (!response.ok) {
+          throw new Error('Failed to fetch orders')
+        }
+        const data = await response.json()
+        setOrders(data.orders || [])
+      } catch (err) {
+        console.error('Error fetching orders:', err)
+        setError('Failed to load orders')
+      } finally {
+        setLoading(false)
+      }
     }
-  ]
+
+    fetchOrders()
+  }, [user])
 
   const getStatusIcon = (status: Order['status']) => {
     switch (status) {
@@ -60,6 +50,8 @@ export default function OrdersPage() {
         return <Truck className="h-5 w-5 text-blue-500" />
       case 'processing':
         return <Clock className="h-5 w-5 text-yellow-500" />
+      case 'pending':
+        return <Clock className="h-5 w-5 text-gray-500" />
       default:
         return <Package className="h-5 w-5 text-gray-500" />
     }
@@ -73,6 +65,8 @@ export default function OrdersPage() {
         return 'bg-blue-100 text-blue-800'
       case 'processing':
         return 'bg-yellow-100 text-yellow-800'
+      case 'pending':
+        return 'bg-gray-100 text-gray-800'
       default:
         return 'bg-gray-100 text-gray-800'
     }
@@ -86,9 +80,19 @@ export default function OrdersPage() {
         return 'Shipped'
       case 'processing':
         return 'Processing'
+      case 'pending':
+        return 'Pending'
       default:
         return 'Cancelled'
     }
+  }
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    })
   }
 
   if (!user) {
@@ -102,6 +106,32 @@ export default function OrdersPage() {
             className="inline-block px-6 py-3 bg-primary-600 text-white font-medium rounded-md hover:bg-primary-700"
           >
             Sign In
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-16">
+        <div className="text-center">
+          <p className="text-gray-600">Loading your orders...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-16">
+        <div className="max-w-md mx-auto text-center">
+          <p className="text-red-600 mb-4">{error}</p>
+          <Link
+            href="/products"
+            className="inline-block px-6 py-3 bg-primary-600 text-white font-medium rounded-md hover:bg-primary-700"
+          >
+            Back to Shopping
           </Link>
         </div>
       </div>
@@ -143,10 +173,7 @@ export default function OrdersPage() {
                     Status
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Items
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Payment
+                    Payment Method
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Total
@@ -160,10 +187,10 @@ export default function OrdersPage() {
                 {orders.map((order) => (
                   <tr key={order.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">{order.id}</div>
+                      <div className="text-sm font-medium text-gray-900">{order.order_number}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{order.date}</div>
+                      <div className="text-sm text-gray-900">{formatDate(order.created_at)}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
@@ -174,13 +201,13 @@ export default function OrdersPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{order.items} items</div>
+                      <div className="text-sm text-gray-900">
+                        {order.payment_method === 'cod' ? 'Cash on Delivery' : 
+                         order.payment_method === 'card' ? 'Credit Card' : 'PayPal'}
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{order.paymentMethod}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">${order.total.toFixed(2)}</div>
+                      <div className="text-sm font-medium text-gray-900">₱{order.total_amount.toFixed(2)}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <Link
