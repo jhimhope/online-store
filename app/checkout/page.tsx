@@ -89,6 +89,7 @@ export default function CheckoutPage() {
           body: JSON.stringify({
             orderNumber: newOrderNumber,
             paymentMethod: 'cod',
+            userId: user?.id,
             firstName: formData.firstName,
             lastName: formData.lastName,
             email: formData.email,
