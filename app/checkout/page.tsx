@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import StripePayment from '@/components/StripePayment'
 import EmailNotification from '@/components/EmailNotification'
+import { useEffect } from 'react'
 
 type PaymentMethod = 'cod' | 'card' | 'paypal'
 
@@ -35,6 +36,13 @@ export default function CheckoutPage() {
     country: 'US',
     notes: ''
   })
+
+  // Clear cart when order is placed
+  useEffect(() => {
+    if (orderPlaced) {
+      clearCart()
+    }
+  }, [orderPlaced, clearCart])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({
@@ -126,23 +134,23 @@ export default function CheckoutPage() {
             <h3 className="text-lg font-medium text-gray-900 mb-4">Order Details</h3>
             <div className="space-y-2 text-left">
               <div className="flex justify-between">
-                <span className="text-gray-600">Order Number:</span>
-                <span className="font-medium">ORD-{Date.now().toString().slice(-8)}</span>
+                <span className="text-gray-700 font-medium">Order Number:</span>
+                <span className="font-medium text-gray-900">ORD-{Date.now().toString().slice(-8)}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Payment Method:</span>
-                <span className="font-medium">
+                <span className="text-gray-700 font-medium">Payment Method:</span>
+                <span className="font-medium text-gray-900">
                   {paymentMethod === 'cod' ? 'Cash on Delivery' : 
                    paymentMethod === 'card' ? 'Credit Card' : 'PayPal'}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Total Amount:</span>
-                <span className="font-medium">${(totalPrice + 5 + (totalPrice * 0.08)).toFixed(2)}</span>
+                <span className="text-gray-700 font-medium">Total Amount:</span>
+                <span className="font-medium text-gray-900">${(totalPrice + 5 + (totalPrice * 0.08)).toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Shipping Address:</span>
-                <span className="font-medium text-right">{formData.address}, {formData.city}, {formData.zipCode}</span>
+                <span className="text-gray-700 font-medium">Shipping Address:</span>
+                <span className="font-medium text-gray-900 text-right">{formData.address}, {formData.city}, {formData.zipCode}</span>
               </div>
             </div>
           </div>
@@ -287,7 +295,7 @@ export default function CheckoutPage() {
                     rows={3}
                     value={formData.notes}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500"
                     placeholder="Any special instructions for delivery..."
                   />
                 </div>
