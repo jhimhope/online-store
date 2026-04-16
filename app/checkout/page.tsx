@@ -164,9 +164,21 @@ export default function CheckoutPage() {
             <div>
               <Link
                 href="/products"
-                className="inline-block px-6 py-3 bg-primary-600 text-white font-medium rounded-md hover:bg-primary-700"
+                className="block w-full text-center px-6 py-3 bg-primary-600 text-white font-medium rounded-md hover:bg-primary-700 mb-4"
               >
                 Continue Shopping
+              </Link>
+              <Link
+                href="/orders"
+                className="block w-full text-center px-6 py-3 bg-gray-600 text-white font-medium rounded-md hover:bg-gray-700 mb-4"
+              >
+                View My Orders
+              </Link>
+              <Link
+                href="/"
+                className="block w-full text-center px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-md hover:bg-gray-50"
+              >
+                Back to Home
               </Link>
               <p className="text-sm text-gray-500 mt-4">
                 You will receive an email confirmation shortly.
