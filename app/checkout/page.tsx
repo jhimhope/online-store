@@ -160,27 +160,30 @@ export default function CheckoutPage() {
             </div>
           </div>
           
-          <div className="grid md:grid-cols-2 gap-8">
-            <div>
-              <Link
-                href="/products"
-                className="block w-full text-center px-6 py-3 bg-primary-600 text-white font-medium rounded-md hover:bg-primary-700 mb-4"
-              >
-                Continue Shopping
-              </Link>
-              <Link
-                href="/orders"
-                className="block w-full text-center px-6 py-3 bg-gray-600 text-white font-medium rounded-md hover:bg-gray-700 mb-4"
-              >
-                View My Orders
-              </Link>
-              <Link
-                href="/"
-                className="block w-full text-center px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-md hover:bg-gray-50"
-              >
-                Back to Home
-              </Link>
-              <p className="text-sm text-gray-500 mt-4">
+          <div className="space-y-6">
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">What's Next?</h3>
+              <div className="space-y-3">
+                <Link
+                  href="/products"
+                  className="block w-full text-center px-6 py-3 bg-primary-600 text-white font-medium rounded-md hover:bg-primary-700"
+                >
+                  Continue Shopping
+                </Link>
+                <Link
+                  href="/orders"
+                  className="block w-full text-center px-6 py-3 bg-gray-600 text-white font-medium rounded-md hover:bg-gray-700"
+                >
+                  View My Orders
+                </Link>
+                <Link
+                  href="/"
+                  className="block w-full text-center px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-md hover:bg-gray-50"
+                >
+                  Back to Home
+                </Link>
+              </div>
+              <p className="text-sm text-gray-500 mt-4 text-center">
                 You will receive an email confirmation shortly.
               </p>
             </div>
