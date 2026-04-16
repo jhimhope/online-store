@@ -151,7 +151,7 @@ export default function CheckoutPage() {
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-700 font-medium">Total Amount:</span>
-                <span className="font-medium text-gray-900">${(totalPrice + 5 + (totalPrice * 0.08)).toFixed(2)}</span>
+                <span className="font-medium text-gray-900">₱{(totalPrice + 5 + (totalPrice * 0.08)).toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-700 font-medium">Shipping Address:</span>
@@ -164,24 +164,24 @@ export default function CheckoutPage() {
             <div className="bg-white rounded-lg shadow-md p-6 relative z-20">
               <h3 className="text-lg font-medium text-gray-900 mb-4">What's Next?</h3>
               <div className="space-y-3">
-                <Link
-                  href="/products"
-                  className="block w-full text-center px-6 py-3 bg-primary-600 text-white font-medium rounded-md hover:bg-primary-700 relative z-20"
+                <button
+                  onClick={() => router.push('/products')}
+                  className="block w-full text-center px-6 py-3 bg-primary-600 text-white font-medium rounded-md hover:bg-primary-700 relative z-20 cursor-pointer"
                 >
                   Continue Shopping
-                </Link>
-                <Link
-                  href="/orders"
-                  className="block w-full text-center px-6 py-3 bg-gray-600 text-white font-medium rounded-md hover:bg-gray-700 relative z-20"
+                </button>
+                <button
+                  onClick={() => router.push('/orders')}
+                  className="block w-full text-center px-6 py-3 bg-gray-600 text-white font-medium rounded-md hover:bg-gray-700 relative z-20 cursor-pointer"
                 >
                   View My Orders
-                </Link>
-                <Link
-                  href="/"
-                  className="block w-full text-center px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-md hover:bg-gray-50 relative z-20"
+                </button>
+                <button
+                  onClick={() => router.push('/')}
+                  className="block w-full text-center px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-md hover:bg-gray-50 relative z-20 cursor-pointer"
                 >
                   Back to Home
-                </Link>
+                </button>
               </div>
               <p className="text-sm text-gray-500 mt-4 text-center">
                 You will receive an email confirmation shortly.
@@ -421,7 +421,7 @@ export default function CheckoutPage() {
                 disabled={isSubmitting}
                 className="w-full py-3 px-4 bg-primary-600 text-white font-medium rounded-md hover:bg-primary-700 disabled:opacity-50"
               >
-                {isSubmitting ? 'Processing Order...' : `Place Order ($${orderTotal.toFixed(2)})`}
+                {isSubmitting ? 'Processing Order...' : `Place Order (₱${orderTotal.toFixed(2)})`}
               </button>
             )}
           </form>
@@ -435,23 +435,23 @@ export default function CheckoutPage() {
             <div className="space-y-4">
               <div className="flex justify-between">
                 <span className="text-gray-700 font-medium">Subtotal ({totalItems} items)</span>
-                <span className="font-medium text-gray-900">${totalPrice.toFixed(2)}</span>
+                <span className="font-medium text-gray-900">₱{totalPrice.toFixed(2)}</span>
               </div>
               
               <div className="flex justify-between">
                 <span className="text-gray-700 font-medium">Shipping</span>
-                <span className="font-medium text-gray-900">${shippingCost.toFixed(2)}</span>
+                <span className="font-medium text-gray-900">₱{shippingCost.toFixed(2)}</span>
               </div>
               
               <div className="flex justify-between">
                 <span className="text-gray-700 font-medium">Tax</span>
-                <span className="font-medium text-gray-900">${tax.toFixed(2)}</span>
+                <span className="font-medium text-gray-900">₱{tax.toFixed(2)}</span>
               </div>
               
               <div className="border-t pt-4">
                 <div className="flex justify-between text-lg font-bold text-gray-900">
                   <span>Total</span>
-                  <span>${orderTotal.toFixed(2)}</span>
+                  <span>₱{orderTotal.toFixed(2)}</span>
                 </div>
               </div>
             </div>
@@ -463,7 +463,7 @@ export default function CheckoutPage() {
                   {items.slice(0, 3).map(item => (
                     <li key={item.id} className="flex justify-between text-gray-700">
                       <span className="truncate">{item.name} × {item.quantity}</span>
-                      <span>${(item.price * item.quantity).toFixed(2)}</span>
+                      <span>₱{(item.price * item.quantity).toFixed(2)}</span>
                     </li>
                   ))}
                   {items.length > 3 && (

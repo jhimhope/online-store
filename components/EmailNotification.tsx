@@ -73,7 +73,7 @@ export default function EmailNotification({ orderNumber, customerEmail, totalAmo
         <div className="bg-gray-50 p-4 rounded-md text-sm">
           <p className="font-medium">Order Confirmation #{orderNumber}</p>
           <p className="text-gray-600 mt-1">Thank you for your order!</p>
-          <p className="text-gray-600 mt-1">Total: ${totalAmount.toFixed(2)}</p>
+          <p className="text-gray-600 mt-1">Total: ₱{totalAmount.toFixed(2)}</p>
           <p className="text-gray-600 mt-1">We'll notify you when your order ships.</p>
         </div>
       </div>

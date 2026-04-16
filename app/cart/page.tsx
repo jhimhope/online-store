@@ -50,10 +50,10 @@ export default function CartPage() {
                       <div className="flex justify-between">
                         <div>
                           <h3 className="text-lg font-medium text-gray-900">{item.name}</h3>
-                          <p className="mt-1 text-sm text-gray-500">${item.price.toFixed(2)} each</p>
+                          <p className="mt-1 text-sm text-gray-500">₱{item.price.toFixed(2)} each</p>
                         </div>
                         <p className="text-lg font-medium text-gray-900">
-                          ${(item.price * item.quantity).toFixed(2)}
+                          ₱{(item.price * item.quantity).toFixed(2)}
                         </p>
                       </div>
                       
@@ -96,23 +96,23 @@ export default function CartPage() {
             <div className="space-y-4">
               <div className="flex justify-between">
                 <span className="text-gray-700 font-medium">Subtotal ({totalItems} items)</span>
-                <span className="font-medium text-gray-900">${totalPrice.toFixed(2)}</span>
+                <span className="font-medium text-gray-900">₱{totalPrice.toFixed(2)}</span>
               </div>
               
               <div className="flex justify-between">
                 <span className="text-gray-700 font-medium">Shipping</span>
-                <span className="font-medium text-gray-900">$5.00</span>
+                <span className="font-medium text-gray-900">₱5.00</span>
               </div>
               
               <div className="flex justify-between">
                 <span className="text-gray-700 font-medium">Tax</span>
-                <span className="font-medium text-gray-900">${(totalPrice * 0.08).toFixed(2)}</span>
+                <span className="font-medium text-gray-900">₱{(totalPrice * 0.08).toFixed(2)}</span>
               </div>
               
               <div className="border-t pt-4">
                 <div className="flex justify-between text-lg font-bold text-gray-900">
                   <span>Total</span>
-                  <span>${(totalPrice + 5 + (totalPrice * 0.08)).toFixed(2)}</span>
+                  <span>₱{(totalPrice + 5 + (totalPrice * 0.08)).toFixed(2)}</span>
                 </div>
               </div>
             </div>
