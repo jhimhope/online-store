@@ -61,14 +61,14 @@ export default function CartPage() {
                         <div className="flex items-center space-x-2">
                           <button
                             onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                            className="p-1 rounded-md border border-gray-300 hover:bg-gray-50"
+                            className="p-1 rounded-md border border-gray-300 hover:bg-gray-50 text-gray-700"
                           >
                             <Minus className="h-4 w-4" />
                           </button>
-                          <span className="w-12 text-center">{item.quantity}</span>
+                          <span className="w-12 text-center text-gray-900 font-medium">{item.quantity}</span>
                           <button
                             onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                            className="p-1 rounded-md border border-gray-300 hover:bg-gray-50"
+                            className="p-1 rounded-md border border-gray-300 hover:bg-gray-50 text-gray-700"
                           >
                             <Plus className="h-4 w-4" />
                           </button>
@@ -95,22 +95,22 @@ export default function CartPage() {
             
             <div className="space-y-4">
               <div className="flex justify-between">
-                <span className="text-gray-600">Subtotal ({totalItems} items)</span>
-                <span className="font-medium">${totalPrice.toFixed(2)}</span>
+                <span className="text-gray-700 font-medium">Subtotal ({totalItems} items)</span>
+                <span className="font-medium text-gray-900">${totalPrice.toFixed(2)}</span>
               </div>
               
               <div className="flex justify-between">
-                <span className="text-gray-600">Shipping</span>
-                <span className="font-medium">$5.00</span>
+                <span className="text-gray-700 font-medium">Shipping</span>
+                <span className="font-medium text-gray-900">$5.00</span>
               </div>
               
               <div className="flex justify-between">
-                <span className="text-gray-600">Tax</span>
-                <span className="font-medium">${(totalPrice * 0.08).toFixed(2)}</span>
+                <span className="text-gray-700 font-medium">Tax</span>
+                <span className="font-medium text-gray-900">${(totalPrice * 0.08).toFixed(2)}</span>
               </div>
               
               <div className="border-t pt-4">
-                <div className="flex justify-between text-lg font-bold">
+                <div className="flex justify-between text-lg font-bold text-gray-900">
                   <span>Total</span>
                   <span>${(totalPrice + 5 + (totalPrice * 0.08)).toFixed(2)}</span>
                 </div>
