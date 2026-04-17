@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { User, ChevronDown, Package, Settings, LogOut } from 'lucide-react'
 import { useAuth } from './AuthProvider'
@@ -12,10 +12,19 @@ export default function Navbar() {
   const { user, signOut } = useAuth()
   const { totalItems: wishlistCount } = useWishlist()
   const [isProfileOpen, setIsProfileOpen] = useState(false)
+  const [userRole, setUserRole] = useState<string>('user')
 
-  const isAdmin = user?.email === 'jhimhope@yahoo.com'
-  const staffEmails = (process.env.NEXT_PUBLIC_STAFF_EMAILS || '').split(',').map(e => e.trim().toLowerCase())
-  const isStaff = isAdmin || staffEmails.includes(user?.email?.toLowerCase() || '')
+  useEffect(() => {
+    if (!user) return
+    fetch('/api/user/role', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_id: user.id })
+    }).then(r => r.json()).then(d => setUserRole(d.role || 'user'))
+  }, [user])
+
+  const isAdmin = userRole === 'admin'
+  const isSupervisor = userRole === 'supervisor' || isAdmin
 
   return (
     <nav className="bg-white shadow-lg">
@@ -95,7 +104,7 @@ export default function Navbar() {
                           Admin Dashboard
                         </Link>
                       )}
-                      {isStaff && (
+                      {isSupervisor && (
                         <Link
                           href="/staff"
                           className="flex items-center px-4 py-2 text-sm text-blue-700 hover:bg-blue-50 font-medium"

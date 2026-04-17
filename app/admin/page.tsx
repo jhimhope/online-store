@@ -540,24 +540,31 @@ export default function AdminPage() {
         {/* USERS TAB */}
         {!loading && activeTab === 'users' && (
           <div className="space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {/* Summary Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
               <div className="bg-white rounded-lg p-5 shadow-sm">
                 <p className="text-sm text-gray-700">Total Users</p>
                 <p className="text-3xl font-bold text-gray-900 mt-1">{users.length}</p>
               </div>
               <div className="bg-white rounded-lg p-5 shadow-sm">
-                <p className="text-sm text-gray-700">Confirmed</p>
-                <p className="text-3xl font-bold text-green-600 mt-1">{users.filter(u => u.confirmed).length}</p>
+                <p className="text-sm text-gray-700">Admins</p>
+                <p className="text-3xl font-bold text-purple-600 mt-1">{users.filter(u => u.role === 'admin').length}</p>
               </div>
               <div className="bg-white rounded-lg p-5 shadow-sm">
-                <p className="text-sm text-gray-700">Users with Orders</p>
-                <p className="text-3xl font-bold text-blue-600 mt-1">{users.filter(u => u.total_orders > 0).length}</p>
+                <p className="text-sm text-gray-700">Supervisors</p>
+                <p className="text-3xl font-bold text-blue-600 mt-1">{users.filter(u => u.role === 'supervisor').length}</p>
+              </div>
+              <div className="bg-white rounded-lg p-5 shadow-sm">
+                <p className="text-sm text-gray-700">Regular Users</p>
+                <p className="text-3xl font-bold text-gray-600 mt-1">{users.filter(u => u.role === 'user').length}</p>
               </div>
             </div>
 
+            {/* Users Table with Role Management */}
             <div className="bg-white rounded-lg shadow-sm overflow-hidden">
               <div className="p-4 border-b">
-                <h2 className="text-lg font-semibold text-gray-900">All Users ({users.length})</h2>
+                <h2 className="text-lg font-semibold text-gray-900">User Management ({users.length})</h2>
+                <p className="text-sm text-gray-500 mt-1">Assign roles: Admin (full access), Supervisor (view & print orders), User (customer)</p>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
@@ -565,10 +572,10 @@ export default function AdminPage() {
                     <tr>
                       <th className="text-left px-4 py-3 text-gray-700">Email</th>
                       <th className="text-left px-4 py-3 text-gray-700">Joined</th>
-                      <th className="text-left px-4 py-3 text-gray-700">Last Login</th>
-                      <th className="text-center px-4 py-3 text-gray-700">Status</th>
+                      <th className="text-center px-4 py-3 text-gray-700">Account</th>
                       <th className="text-right px-4 py-3 text-gray-700">Orders</th>
-                      <th className="text-right px-4 py-3 text-gray-700">Total Spent</th>
+                      <th className="text-right px-4 py-3 text-gray-700">Spent</th>
+                      <th className="text-center px-4 py-3 text-gray-700">Role</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -576,22 +583,88 @@ export default function AdminPage() {
                       <tr><td colSpan={6} className="px-4 py-8 text-center text-gray-700">No users found.</td></tr>
                     ) : users.map(u => (
                       <tr key={u.id} className="border-t hover:bg-gray-50">
-                        <td className="px-4 py-3 text-gray-900">{u.email}</td>
+                        <td className="px-4 py-3">
+                          <div>
+                            <p className="text-gray-900 font-medium">{u.email}</p>
+                            <p className="text-gray-500 text-xs">{u.last_sign_in ? `Last login: ${new Date(u.last_sign_in).toLocaleDateString()}` : 'Never logged in'}</p>
+                          </div>
+                        </td>
                         <td className="px-4 py-3 text-gray-700">{new Date(u.created_at).toLocaleDateString()}</td>
-                        <td className="px-4 py-3 text-gray-700">{u.last_sign_in ? new Date(u.last_sign_in).toLocaleDateString() : '—'}</td>
                         <td className="px-4 py-3 text-center">
                           {u.confirmed ? (
                             <span className="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">Confirmed</span>
                           ) : (
-                            <span className="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-700">Unconfirmed</span>
+                            <span className="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-700">Pending</span>
                           )}
                         </td>
                         <td className="px-4 py-3 text-right text-gray-900">{u.total_orders ?? 0}</td>
                         <td className="px-4 py-3 text-right text-gray-900">₱{Number(u.total_spent ?? 0).toLocaleString()}</td>
+                        <td className="px-4 py-3 text-center">
+                          <select
+                            value={u.role || 'user'}
+                            onChange={async (e) => {
+                              const newRole = e.target.value
+                              const res = await fetch('/api/admin/roles', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ user_id: u.id, email: u.email, role: newRole })
+                              })
+                              if (res.ok) {
+                                setUsers(prev => prev.map(usr => usr.id === u.id ? { ...usr, role: newRole } : usr))
+                              }
+                            }}
+                            className={`text-xs rounded-full px-3 py-1 font-medium border-0 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary-500 ${
+                              u.role === 'admin' ? 'bg-purple-100 text-purple-800' :
+                              u.role === 'supervisor' ? 'bg-blue-100 text-blue-800' :
+                              'bg-gray-100 text-gray-700'
+                            }`}
+                          >
+                            <option value="user">User</option>
+                            <option value="supervisor">Supervisor</option>
+                            <option value="admin">Admin</option>
+                          </select>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
+              </div>
+            </div>
+
+            {/* Role Legend */}
+            <div className="bg-white rounded-lg shadow-sm p-5">
+              <h3 className="font-semibold text-gray-900 mb-3">Role Permissions</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="p-3 bg-purple-50 rounded-lg border border-purple-100">
+                  <p className="font-medium text-purple-800 mb-1">👑 Admin</p>
+                  <ul className="text-xs text-purple-700 space-y-1">
+                    <li>✓ Full dashboard access</li>
+                    <li>✓ Manage products</li>
+                    <li>✓ View all reports</li>
+                    <li>✓ Manage users & roles</li>
+                    <li>✓ View & print orders</li>
+                  </ul>
+                </div>
+                <div className="p-3 bg-blue-50 rounded-lg border border-blue-100">
+                  <p className="font-medium text-blue-800 mb-1">🔵 Supervisor</p>
+                  <ul className="text-xs text-blue-700 space-y-1">
+                    <li>✓ View & print orders</li>
+                    <li>✓ Search & filter orders</li>
+                    <li>✗ Cannot manage products</li>
+                    <li>✗ Cannot view reports</li>
+                    <li>✗ Cannot manage users</li>
+                  </ul>
+                </div>
+                <div className="p-3 bg-gray-50 rounded-lg border border-gray-100">
+                  <p className="font-medium text-gray-800 mb-1">👤 User</p>
+                  <ul className="text-xs text-gray-700 space-y-1">
+                    <li>✓ Browse products</li>
+                    <li>✓ Place orders</li>
+                    <li>✓ View own orders</li>
+                    <li>✗ No backend access</li>
+                    <li>✗ No admin access</li>
+                  </ul>
+                </div>
               </div>
             </div>
           </div>

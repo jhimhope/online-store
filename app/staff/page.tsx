@@ -2,11 +2,8 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useAuth } from '@/components/AuthProvider'
-import { Printer, Search, Filter } from 'lucide-react'
+import { Printer, Search } from 'lucide-react'
 import Link from 'next/link'
-
-const ADMIN_EMAIL = 'jhimhope@yahoo.com'
-const STAFF_EMAILS = (process.env.NEXT_PUBLIC_STAFF_EMAILS || '').split(',').map(e => e.trim().toLowerCase())
 
 export default function StaffPage() {
   const { user } = useAuth()
@@ -17,23 +14,31 @@ export default function StaffPage() {
   const [statusFilter, setStatusFilter] = useState('all')
   const [selectedOrder, setSelectedOrder] = useState<any>(null)
   const [orderItems, setOrderItems] = useState<any[]>([])
+  const [userRole, setUserRole] = useState<string | null>(null)
   const printRef = useRef<HTMLDivElement>(null)
 
-  const isAuthorized = user && (
-    user.email === ADMIN_EMAIL ||
-    STAFF_EMAILS.includes(user.email?.toLowerCase() || '')
-  )
-
   useEffect(() => {
-    if (!isAuthorized) { setLoading(false); return }
-    fetch('/api/admin/orders')
-      .then(r => r.json())
-      .then(d => {
-        setOrders(d.orders || [])
-        setFiltered(d.orders || [])
+    if (!user) { setLoading(false); return }
+    // Check role
+    fetch('/api/user/role', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_id: user.id })
+    }).then(r => r.json()).then(d => {
+      setUserRole(d.role || 'user')
+      if (d.role === 'admin' || d.role === 'supervisor') {
+        fetch('/api/admin/orders')
+          .then(r => r.json())
+          .then(data => {
+            setOrders(data.orders || [])
+            setFiltered(data.orders || [])
+            setLoading(false)
+          })
+      } else {
         setLoading(false)
-      })
-  }, [isAuthorized])
+      }
+    })
+  }, [user])
 
   useEffect(() => {
     let result = [...orders]
@@ -111,7 +116,7 @@ export default function StaffPage() {
     )
   }
 
-  if (!isAuthorized && !loading) {
+  if (userRole !== null && userRole !== 'admin' && userRole !== 'supervisor') {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
