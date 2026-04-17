@@ -562,17 +562,9 @@ export default function AdminPage() {
 
             {/* Users Table with Role Management */}
             <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-              <div className="p-4 border-b flex justify-between items-center">
-                <div>
-                  <h2 className="text-lg font-semibold text-gray-900">User Management ({users.length})</h2>
-                  <p className="text-sm text-gray-500 mt-1">Assign roles: Admin (full access), Supervisor (view & print orders), User (customer)</p>
-                </div>
-                <button
-                  onClick={() => fetch(`/api/admin/users?t=${Date.now()}`).then(r => r.json()).then(d => setUsers(d.users || []))}
-                  className="px-3 py-2 text-sm border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
-                >
-                  ↻ Refresh
-                </button>
+              <div className="p-4 border-b">
+                <h2 className="text-lg font-semibold text-gray-900">User Management ({users.length})</h2>
+                <p className="text-sm text-gray-500 mt-1">Assign roles: Admin (full access), Supervisor (view & print orders), User (customer)</p>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">

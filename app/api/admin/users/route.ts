@@ -45,7 +45,9 @@ export async function GET() {
           role: userRole?.role || 'user',
         }
       })
-      return NextResponse.json({ users: usersWithStats })
+      return NextResponse.json({ users: usersWithStats }, {
+        headers: { 'Cache-Control': 'no-store, max-age=0' }
+      })
     }
 
     // Fallback: build users from user_roles + orders data
