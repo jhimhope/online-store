@@ -6,7 +6,6 @@ import { User, ChevronDown, Package, Settings, LogOut } from 'lucide-react'
 import { useAuth } from './AuthProvider'
 import CartIcon from './CartIcon'
 import SearchBar from './SearchBar'
-import Link from 'next/link'
 import { useWishlist } from './WishlistProvider'
 
 export default function Navbar() {
