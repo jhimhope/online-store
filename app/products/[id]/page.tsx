@@ -2,14 +2,16 @@
 
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { ShoppingCart, ArrowLeft, Star, Package } from 'lucide-react'
+import { ShoppingCart, ArrowLeft, Star, Package, Heart } from 'lucide-react'
 import { useCart } from '@/components/CartProvider'
+import { useWishlist } from '@/components/WishlistProvider'
 import Link from 'next/link'
 
 export default function ProductDetailPage() {
   const params = useParams()
   const router = useRouter()
   const { addToCart } = useCart()
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist()
   const [product, setProduct] = useState<any>(null)
   const [related, setRelated] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
@@ -152,6 +154,13 @@ export default function ProductDetailPage() {
               >
                 <ShoppingCart className="h-5 w-5" />
                 {added ? '✓ Added to Cart!' : 'Add to Cart'}
+              </button>
+              <button
+                onClick={() => isInWishlist(product.id) ? removeFromWishlist(product.id) : addToWishlist({ id: product.id, name: product.name, price: product.price, image: product.image_url, category: product.category })}
+                className={`p-3 border rounded-md transition-colors ${isInWishlist(product.id) ? 'border-red-400 bg-red-50 text-red-500' : 'border-gray-300 text-gray-500 hover:border-red-400 hover:text-red-500'}`}
+                title={isInWishlist(product.id) ? 'Remove from Wishlist' : 'Add to Wishlist'}
+              >
+                <Heart className={`h-5 w-5 ${isInWishlist(product.id) ? 'fill-red-500' : ''}`} />
               </button>
             </div>
           )}

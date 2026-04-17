@@ -48,29 +48,3 @@ CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status);
 CREATE INDEX IF NOT EXISTS idx_orders_created_at ON orders(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_order_items_order_id ON order_items(order_id);
 CREATE INDEX IF NOT EXISTS idx_order_items_product_id ON order_items(product_id);
-
--- Create function to generate order number
-CREATE OR REPLACE FUNCTION generate_order_number()
-RETURNS TRIGGER AS $$
-BEGIN
-  NEW.order_number := 'ORD-' || TO_CHAR(NEW.created_at, 'YYYYMMDD') || '-' || LPAD(FLOOR(RANDOM() * 10000)::TEXT, 4, '0');
-  RETURN NEW;
-END;
-$$ language 'plpgsql';
-
--- Create trigger to generate order number
-CREATE TRIGGER generate_order_number_trigger BEFORE INSERT
-    ON orders FOR EACH ROW EXECUTE FUNCTION generate_order_number();
-
--- Create function to update updated_at timestamp for orders
-CREATE OR REPLACE FUNCTION update_orders_updated_at()
-RETURNS TRIGGER AS $$
-BEGIN
-    NEW.updated_at = TIMEZONE('utc'::text, NOW());
-    RETURN NEW;
-END;
-$$ language 'plpgsql';
-
--- Create trigger to automatically update updated_at for orders
-CREATE TRIGGER update_orders_updated_at BEFORE UPDATE
-    ON orders FOR EACH ROW EXECUTE FUNCTION update_orders_updated_at();

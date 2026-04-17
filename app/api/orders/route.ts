@@ -41,11 +41,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: orderError.message }, { status: 400 })
     }
 
-    // Create order items
+    // Create order items and deduct stock
     if (body.items && body.items.length > 0 && order && order[0]) {
       const orderItems = body.items.map((item: any) => ({
         order_id: order[0].id,
-        product_id: null, // skip product_id FK since items may not be in DB
+        product_id: null,
         product_name: item.name,
         product_price: item.price,
         quantity: item.quantity,
@@ -58,6 +58,16 @@ export async function POST(request: NextRequest) {
 
       if (itemsError) {
         console.error('Order items insert error:', itemsError)
+      }
+
+      // Deduct stock for each item
+      for (const item of body.items) {
+        if (item.productId) {
+          await supabase.rpc('decrement_stock', {
+            product_id: item.productId,
+            quantity: item.quantity
+          })
+        }
       }
     }
 
