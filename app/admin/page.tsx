@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { Package, TrendingUp, ShoppingCart, AlertTriangle, Pencil, Trash2, Plus, X } from 'lucide-react'
+import { Package, TrendingUp, ShoppingCart, AlertTriangle, Pencil, Trash2, Plus, X, ShieldX } from 'lucide-react'
 import { useAuth } from '@/components/AuthProvider'
 import Link from 'next/link'
 
@@ -15,6 +15,7 @@ export default function AdminPage() {
   const [products, setProducts] = useState<any[]>([])
   const [users, setUsers] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(null)
   const [updatingOrder, setUpdatingOrder] = useState<string | null>(null)
   const [showModal, setShowModal] = useState(false)
   const [editingProduct, setEditingProduct] = useState<any>(null)
@@ -23,6 +24,16 @@ export default function AdminPage() {
   const [formError, setFormError] = useState('')
 
   useEffect(() => {
+    if (!user) return
+    // Check if user is admin
+    fetch('/api/admin/check', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: user.email })
+    })
+      .then(r => r.json())
+      .then(d => setIsAdmin(d.isAdmin))
+
     Promise.all([
       fetch('/api/admin/stats').then(r => r.json()),
       fetch('/api/admin/orders').then(r => r.json()),
@@ -134,15 +145,69 @@ export default function AdminPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
+          <ShieldX className="h-16 w-16 text-gray-400 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Access Required</h2>
           <p className="text-gray-700 mb-4">You must be logged in to view the admin dashboard.</p>
-          <Link href="/login" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Login</Link>
+          <Link href="/login" className="bg-primary-600 text-white px-6 py-3 rounded-md hover:bg-primary-700 font-medium">Sign In</Link>
         </div>
       </div>
     )
   }
 
+  // Check admin access via API
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(null)
+  useEffect(() => {
+    fetch('/api/admin/check', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: user.email }) })
+      .then(r => r.json())
+      .then(d => setIsAdmin(d.isAdmin))
+  }, [user.email])
+
+  // Check admin access via API
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(null)
+  useEffect(() => {
+    fetch('/api/admin/check', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: user.email }) })
+      .then(r => r.json())
+      .then(d => setIsAdmin(d.isAdmin))
+  }, [user.email])
+
   const tabs = ['overview', 'orders', 'products', 'inventory', 'sales report', 'users']
+
+  // Not logged in
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <ShieldX className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Access Required</h2>
+          <p className="text-gray-700 mb-4">Please sign in to access the admin dashboard.</p>
+          <Link href="/login" className="bg-primary-600 text-white px-6 py-3 rounded-md hover:bg-primary-700 font-medium">Sign In</Link>
+        </div>
+      </div>
+    )
+  }
+
+  // Still checking admin status
+  if (isAdmin === null) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <p className="text-gray-600">Verifying admin access...</p>
+      </div>
+    )
+  }
+
+  // Not an admin
+  if (isAdmin === false) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <ShieldX className="h-16 w-16 text-red-400 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h2>
+          <p className="text-gray-700 mb-4">You don't have permission to access the admin dashboard.</p>
+          <Link href="/" className="bg-primary-600 text-white px-6 py-3 rounded-md hover:bg-primary-700 font-medium">Back to Store</Link>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
