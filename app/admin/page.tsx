@@ -24,15 +24,13 @@ export default function AdminPage() {
   const [formError, setFormError] = useState('')
 
   useEffect(() => {
-    if (!user) return
-    // Check if user is admin
+    if (!user) { setLoading(false); return }
+
     fetch('/api/admin/check', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: user.email })
-    })
-      .then(r => r.json())
-      .then(d => setIsAdmin(d.isAdmin))
+    }).then(r => r.json()).then(d => setIsAdmin(d.isAdmin))
 
     Promise.all([
       fetch('/api/admin/stats').then(r => r.json()),
@@ -46,7 +44,7 @@ export default function AdminPage() {
       setUsers(u.users || [])
       setLoading(false)
     })
-  }, [])
+  }, [user])
 
   async function updateOrderStatus(orderId: string, status: string) {
     setUpdatingOrder(orderId)
@@ -141,6 +139,8 @@ export default function AdminPage() {
     return 'text-green-600'
   }
 
+  // --- Conditional returns AFTER all hooks ---
+
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -148,46 +148,13 @@ export default function AdminPage() {
           <ShieldX className="h-16 w-16 text-gray-400 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Access Required</h2>
           <p className="text-gray-700 mb-4">You must be logged in to view the admin dashboard.</p>
-          <Link href="/login" className="bg-primary-600 text-white px-6 py-3 rounded-md hover:bg-primary-700 font-medium">Sign In</Link>
+          <Link href="/login" className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 font-medium">Sign In</Link>
         </div>
       </div>
     )
   }
 
-  // Check admin access via API
-  const [isAdmin, setIsAdmin] = useState<boolean | null>(null)
-  useEffect(() => {
-    fetch('/api/admin/check', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: user.email }) })
-      .then(r => r.json())
-      .then(d => setIsAdmin(d.isAdmin))
-  }, [user.email])
-
-  // Check admin access via API
-  const [isAdmin, setIsAdmin] = useState<boolean | null>(null)
-  useEffect(() => {
-    fetch('/api/admin/check', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: user.email }) })
-      .then(r => r.json())
-      .then(d => setIsAdmin(d.isAdmin))
-  }, [user.email])
-
-  const tabs = ['overview', 'orders', 'products', 'inventory', 'sales report', 'users']
-
-  // Not logged in
-  if (!user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <ShieldX className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Access Required</h2>
-          <p className="text-gray-700 mb-4">Please sign in to access the admin dashboard.</p>
-          <Link href="/login" className="bg-primary-600 text-white px-6 py-3 rounded-md hover:bg-primary-700 font-medium">Sign In</Link>
-        </div>
-      </div>
-    )
-  }
-
-  // Still checking admin status
-  if (isAdmin === null) {
+  if (isAdmin === null && !loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <p className="text-gray-600">Verifying admin access...</p>
@@ -195,19 +162,20 @@ export default function AdminPage() {
     )
   }
 
-  // Not an admin
   if (isAdmin === false) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <ShieldX className="h-16 w-16 text-red-400 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h2>
-          <p className="text-gray-700 mb-4">You don't have permission to access the admin dashboard.</p>
-          <Link href="/" className="bg-primary-600 text-white px-6 py-3 rounded-md hover:bg-primary-700 font-medium">Back to Store</Link>
+          <p className="text-gray-700 mb-4">You don&apos;t have permission to access the admin dashboard.</p>
+          <Link href="/" className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 font-medium">Back to Store</Link>
         </div>
       </div>
     )
   }
+
+  const tabs = ['overview', 'orders', 'products', 'inventory', 'sales report', 'users']
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -254,20 +222,19 @@ export default function AdminPage() {
         {/* OVERVIEW TAB */}
         {!loading && activeTab === 'overview' && (
           <div className="space-y-6">
-            {/* Stats Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="bg-white rounded-lg p-5 shadow-sm flex items-center gap-4">
-                <ShoppingCart className="text-blue-500 w-8 h-8" />
-                <div>
-                  <p className="text-sm text-gray-700">Total Orders</p>
-                  <p className="text-2xl font-bold text-gray-900">{stats?.total_orders ?? 0}</p>
-                </div>
-              </div>
               <div className="bg-white rounded-lg p-5 shadow-sm flex items-center gap-4">
                 <TrendingUp className="text-green-500 w-8 h-8" />
                 <div>
                   <p className="text-sm text-gray-700">Total Revenue</p>
                   <p className="text-2xl font-bold text-gray-900">₱{Number(stats?.total_revenue ?? 0).toLocaleString()}</p>
+                </div>
+              </div>
+              <div className="bg-white rounded-lg p-5 shadow-sm flex items-center gap-4">
+                <ShoppingCart className="text-blue-500 w-8 h-8" />
+                <div>
+                  <p className="text-sm text-gray-700">Total Orders</p>
+                  <p className="text-2xl font-bold text-gray-900">{stats?.total_orders ?? 0}</p>
                 </div>
               </div>
               <div className="bg-white rounded-lg p-5 shadow-sm flex items-center gap-4">
@@ -286,39 +253,30 @@ export default function AdminPage() {
               </div>
             </div>
 
-            {/* Orders by Status */}
             <div className="bg-white rounded-lg p-5 shadow-sm">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Orders by Status</h2>
               <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-                {['pending', 'processing', 'shipped', 'delivered', 'cancelled'].map(status => {
-                  const count = orders.filter(o => o.status === status).length
-                  return (
-                    <div key={status} className={`rounded-lg p-3 text-center ${getStatusColor(status)}`}>
-                      <p className="text-xl font-bold">{count}</p>
-                      <p className="text-xs capitalize">{status}</p>
-                    </div>
-                  )
-                })}
+                {['pending', 'processing', 'shipped', 'delivered', 'cancelled'].map(status => (
+                  <div key={status} className={`rounded-lg p-3 text-center ${getStatusColor(status)}`}>
+                    <p className="text-xl font-bold">{orders.filter(o => o.status === status).length}</p>
+                    <p className="text-xs capitalize">{status}</p>
+                  </div>
+                ))}
               </div>
             </div>
 
-            {/* Payment Methods */}
             <div className="bg-white rounded-lg p-5 shadow-sm">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Payment Methods</h2>
               <div className="space-y-2">
-                {['card', 'cod', 'gcash'].map(method => {
-                  const count = orders.filter(o => o.payment_method === method).length
-                  return (
-                    <div key={method} className="flex items-center justify-between">
-                      <span className="text-gray-700 capitalize">{method === 'cod' ? 'Cash on Delivery' : method === 'gcash' ? 'GCash' : 'Card'}</span>
-                      <span className="font-semibold text-gray-900">{count} orders</span>
-                    </div>
-                  )
-                })}
+                {[['card', 'Card'], ['cod', 'Cash on Delivery'], ['gcash', 'GCash']].map(([method, label]) => (
+                  <div key={method} className="flex items-center justify-between">
+                    <span className="text-gray-700">{label}</span>
+                    <span className="font-semibold text-gray-900">{orders.filter(o => o.payment_method === method).length} orders</span>
+                  </div>
+                ))}
               </div>
             </div>
 
-            {/* Top Products by Stock */}
             <div className="bg-white rounded-lg p-5 shadow-sm">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Top Products</h2>
               <table className="w-full text-sm">
@@ -355,22 +313,22 @@ export default function AdminPage() {
               <table className="w-full text-sm">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="text-left px-4 py-3 text-gray-700">Order ID</th>
+                    <th className="text-left px-4 py-3 text-gray-700">Order #</th>
                     <th className="text-left px-4 py-3 text-gray-700">Customer</th>
-                    <th className="text-right px-4 py-3 text-gray-700">Total</th>
-                    <th className="text-left px-4 py-3 text-gray-700">Payment</th>
                     <th className="text-left px-4 py-3 text-gray-700">Date</th>
+                    <th className="text-left px-4 py-3 text-gray-700">Payment</th>
+                    <th className="text-right px-4 py-3 text-gray-700">Total</th>
                     <th className="text-left px-4 py-3 text-gray-700">Status</th>
                   </tr>
                 </thead>
                 <tbody>
                   {orders.map(order => (
                     <tr key={order.id} className="border-t hover:bg-gray-50">
-                      <td className="px-4 py-3 text-gray-900 font-mono text-xs">{order.id.slice(0, 8)}…</td>
-                      <td className="px-4 py-3 text-gray-700">{order.customer_email || order.user_id?.slice(0, 8) || '—'}</td>
-                      <td className="px-4 py-3 text-right text-gray-900">₱{Number(order.total_amount).toLocaleString()}</td>
-                      <td className="px-4 py-3 text-gray-700 capitalize">{order.payment_method || '—'}</td>
+                      <td className="px-4 py-3 text-gray-900 font-mono text-xs">{order.order_number || order.id.slice(0, 8)}</td>
+                      <td className="px-4 py-3 text-gray-700">{order.customer_name || order.customer_email || '—'}</td>
                       <td className="px-4 py-3 text-gray-700">{new Date(order.created_at).toLocaleDateString()}</td>
+                      <td className="px-4 py-3 text-gray-700 capitalize">{order.payment_method || '—'}</td>
+                      <td className="px-4 py-3 text-right text-gray-900">₱{Number(order.total_amount).toLocaleString()}</td>
                       <td className="px-4 py-3">
                         <select
                           value={order.status}
@@ -410,7 +368,7 @@ export default function AdminPage() {
               <table className="w-full text-sm">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="text-left px-4 py-3 text-gray-700">Name</th>
+                    <th className="text-left px-4 py-3 text-gray-700">Product</th>
                     <th className="text-left px-4 py-3 text-gray-700">Category</th>
                     <th className="text-right px-4 py-3 text-gray-700">Price</th>
                     <th className="text-right px-4 py-3 text-gray-700">Stock</th>
@@ -420,7 +378,12 @@ export default function AdminPage() {
                 <tbody>
                   {products.map(p => (
                     <tr key={p.id} className="border-t hover:bg-gray-50">
-                      <td className="px-4 py-3 text-gray-900">{p.name}</td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-3">
+                          {p.image_url && <img src={p.image_url} alt={p.name} className="w-8 h-8 rounded object-cover" />}
+                          <span className="text-gray-900">{p.name}</span>
+                        </div>
+                      </td>
                       <td className="px-4 py-3 text-gray-700">{p.category}</td>
                       <td className="px-4 py-3 text-right text-gray-900">₱{Number(p.price).toLocaleString()}</td>
                       <td className={`px-4 py-3 text-right ${getStockColor(p.stock_quantity)}`}>{p.stock_quantity}</td>
@@ -450,7 +413,8 @@ export default function AdminPage() {
               <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 flex items-center gap-2">
                 <AlertTriangle className="text-orange-500 w-5 h-5 flex-shrink-0" />
                 <p className="text-orange-700 text-sm">
-                  {products.filter(p => p.stock_quantity <= 5).length} product(s) critically low,{' '}
+                  {products.filter(p => p.stock_quantity === 0).length} out of stock,{' '}
+                  {products.filter(p => p.stock_quantity > 0 && p.stock_quantity <= 5).length} critically low,{' '}
                   {products.filter(p => p.stock_quantity > 5 && p.stock_quantity <= 20).length} low on stock.
                 </p>
               </div>
@@ -504,7 +468,6 @@ export default function AdminPage() {
         {/* SALES REPORT TAB */}
         {!loading && activeTab === 'sales report' && (
           <div className="space-y-6">
-            {/* Monthly Revenue */}
             <div className="bg-white rounded-lg shadow-sm overflow-hidden">
               <div className="p-4 border-b">
                 <h2 className="text-lg font-semibold text-gray-900">Monthly Revenue</h2>
@@ -544,7 +507,6 @@ export default function AdminPage() {
               </div>
             </div>
 
-            {/* Product Sales Report */}
             <div className="bg-white rounded-lg shadow-sm overflow-hidden">
               <div className="p-4 border-b">
                 <h2 className="text-lg font-semibold text-gray-900">Product Sales Report</h2>
@@ -581,23 +543,21 @@ export default function AdminPage() {
         {/* USERS TAB */}
         {!loading && activeTab === 'users' && (
           <div className="space-y-6">
-            {/* Users Summary */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="bg-white rounded-lg p-5 shadow-sm">
-                <p className="text-sm text-gray-600">Total Users</p>
+                <p className="text-sm text-gray-700">Total Users</p>
                 <p className="text-3xl font-bold text-gray-900 mt-1">{users.length}</p>
               </div>
               <div className="bg-white rounded-lg p-5 shadow-sm">
-                <p className="text-sm text-gray-600">Confirmed Accounts</p>
+                <p className="text-sm text-gray-700">Confirmed</p>
                 <p className="text-3xl font-bold text-green-600 mt-1">{users.filter(u => u.confirmed).length}</p>
               </div>
               <div className="bg-white rounded-lg p-5 shadow-sm">
-                <p className="text-sm text-gray-600">Users with Orders</p>
+                <p className="text-sm text-gray-700">Users with Orders</p>
                 <p className="text-3xl font-bold text-blue-600 mt-1">{users.filter(u => u.total_orders > 0).length}</p>
               </div>
             </div>
 
-            {/* Users Table */}
             <div className="bg-white rounded-lg shadow-sm overflow-hidden">
               <div className="p-4 border-b">
                 <h2 className="text-lg font-semibold text-gray-900">All Users ({users.length})</h2>
@@ -616,27 +576,21 @@ export default function AdminPage() {
                   </thead>
                   <tbody>
                     {users.length === 0 ? (
-                      <tr><td colSpan={6} className="px-4 py-8 text-center text-gray-500">No users found.</td></tr>
-                    ) : users.map(user => (
-                      <tr key={user.id} className="border-t hover:bg-gray-50">
-                        <td className="px-4 py-3 text-gray-900">{user.email}</td>
-                        <td className="px-4 py-3 text-gray-700">
-                          {new Date(user.created_at).toLocaleDateString()}
-                        </td>
-                        <td className="px-4 py-3 text-gray-700">
-                          {user.last_sign_in ? new Date(user.last_sign_in).toLocaleDateString() : '—'}
-                        </td>
+                      <tr><td colSpan={6} className="px-4 py-8 text-center text-gray-700">No users found.</td></tr>
+                    ) : users.map(u => (
+                      <tr key={u.id} className="border-t hover:bg-gray-50">
+                        <td className="px-4 py-3 text-gray-900">{u.email}</td>
+                        <td className="px-4 py-3 text-gray-700">{new Date(u.created_at).toLocaleDateString()}</td>
+                        <td className="px-4 py-3 text-gray-700">{u.last_sign_in ? new Date(u.last_sign_in).toLocaleDateString() : '—'}</td>
                         <td className="px-4 py-3 text-center">
-                          {user.confirmed ? (
+                          {u.confirmed ? (
                             <span className="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">Confirmed</span>
                           ) : (
-                            <span className="px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800">Pending</span>
+                            <span className="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-700">Unconfirmed</span>
                           )}
                         </td>
-                        <td className="px-4 py-3 text-right text-gray-900">{user.total_orders}</td>
-                        <td className="px-4 py-3 text-right font-medium text-gray-900">
-                          ₱{user.total_spent.toFixed(2)}
-                        </td>
+                        <td className="px-4 py-3 text-right text-gray-900">{u.total_orders ?? 0}</td>
+                        <td className="px-4 py-3 text-right text-gray-900">₱{Number(u.total_spent ?? 0).toLocaleString()}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -647,30 +601,25 @@ export default function AdminPage() {
         )}
       </div>
 
-      {/* MODAL */}
+      {/* ADD/EDIT PRODUCT MODAL */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-lg relative">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between p-5 border-b">
-              <h3 className="text-lg font-semibold text-gray-900">
-                {editingProduct ? 'Edit Product' : 'Add Product'}
-              </h3>
-              <button onClick={() => setShowModal(false)} className="text-gray-500 hover:text-gray-700">
+              <h2 className="text-lg font-semibold text-gray-900">{editingProduct ? 'Edit Product' : 'Add Product'}</h2>
+              <button onClick={() => setShowModal(false)} className="text-gray-400 hover:text-gray-600">
                 <X className="w-5 h-5" />
               </button>
             </div>
             <div className="p-5 space-y-4">
-              {formError && (
-                <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded p-2">{formError}</p>
-              )}
+              {formError && <p className="text-red-600 text-sm bg-red-50 rounded p-3">{formError}</p>}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
                 <input
                   type="text"
-                  required
                   value={productForm.name}
                   onChange={e => setProductForm(f => ({ ...f, name: e.target.value }))}
-                  className="w-full border rounded px-3 py-2 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Product name"
                 />
               </div>
@@ -680,7 +629,7 @@ export default function AdminPage() {
                   value={productForm.description}
                   onChange={e => setProductForm(f => ({ ...f, description: e.target.value }))}
                   rows={3}
-                  className="w-full border rounded px-3 py-2 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Product description"
                 />
               </div>
@@ -689,27 +638,35 @@ export default function AdminPage() {
                   <label className="block text-sm font-medium text-gray-700 mb-1">Price (₱) *</label>
                   <input
                     type="number"
-                    required
-                    min="0"
-                    step="0.01"
                     value={productForm.price}
                     onChange={e => setProductForm(f => ({ ...f, price: e.target.value }))}
-                    className="w-full border rounded px-3 py-2 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full border rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="0.00"
+                    min="0"
+                    step="0.01"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Stock Qty *</label>
                   <input
                     type="number"
-                    required
-                    min="0"
                     value={productForm.stock_quantity}
                     onChange={e => setProductForm(f => ({ ...f, stock_quantity: e.target.value }))}
-                    className="w-full border rounded px-3 py-2 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full border rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="0"
+                    min="0"
                   />
                 </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                <select
+                  value={productForm.category}
+                  onChange={e => setProductForm(f => ({ ...f, category: e.target.value }))}
+                  className="w-full border rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                </select>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
@@ -717,34 +674,24 @@ export default function AdminPage() {
                   type="text"
                   value={productForm.image_url}
                   onChange={e => setProductForm(f => ({ ...f, image_url: e.target.value }))}
-                  className="w-full border rounded px-3 py-2 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full border rounded-md px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="https://..."
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                <select
-                  value={productForm.category}
-                  onChange={e => setProductForm(f => ({ ...f, category: e.target.value }))}
-                  className="w-full border rounded px-3 py-2 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-                </select>
-              </div>
             </div>
-            <div className="flex justify-end gap-3 p-5 border-t">
+            <div className="flex items-center justify-end gap-3 p-5 border-t">
               <button
                 onClick={() => setShowModal(false)}
-                className="px-4 py-2 text-sm text-gray-700 border rounded hover:bg-gray-50"
+                className="px-4 py-2 text-sm text-gray-700 border rounded-md hover:bg-gray-50"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSaveProduct}
                 disabled={saving}
-                className="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-60"
+                className="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
               >
-                {saving ? 'Saving…' : 'Save'}
+                {saving ? 'Saving...' : 'Save'}
               </button>
             </div>
           </div>
