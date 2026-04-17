@@ -6,9 +6,10 @@ import { useAuth } from '@/components/AuthProvider'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import StripePayment from '@/components/StripePayment'
+import PayMongoPayment from '@/components/PayMongoPayment'
 import { useEffect } from 'react'
 
-type PaymentMethod = 'cod' | 'card' | 'paypal'
+type PaymentMethod = 'cod' | 'card' | 'paypal' | 'gcash' | 'paymaya'
 
 export default function CheckoutPage() {
   const { items, totalItems, totalPrice, clearCart } = useCart()
@@ -250,7 +251,7 @@ export default function CheckoutPage() {
               <div className="flex justify-between">
                 <span className="text-gray-700 font-medium">Payment:</span>
                 <span className="font-medium text-gray-900">
-                  {paymentMethod === 'cod' ? 'Cash on Delivery' : paymentMethod === 'card' ? 'Credit Card' : 'PayPal'}
+                  {paymentMethod === 'cod' ? 'Cash on Delivery' : paymentMethod === 'card' ? 'Credit Card' : paymentMethod === 'gcash' ? 'GCash' : paymentMethod === 'paymaya' ? 'Maya' : 'PayPal'}
                 </span>
               </div>
               <div className="flex justify-between">
@@ -484,6 +485,41 @@ export default function CheckoutPage() {
                     </p>
                   </label>
                 </div>
+
+                <div className="flex items-center">
+                  <input
+                    type="radio"
+                    id="gcash"
+                    name="paymentMethod"
+                    checked={paymentMethod === 'gcash'}
+                    onChange={() => setPaymentMethod('gcash')}
+                    className="h-4 w-4 text-primary-600 focus:ring-primary-500"
+                  />
+                  <label htmlFor="gcash" className="ml-3 block text-sm font-medium text-gray-700">
+                    <div className="flex items-center">
+                      <span className="text-gray-900">GCash</span>
+                      <span className="ml-2 px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded">Popular</span>
+                    </div>
+                    <p className="text-sm text-gray-600 mt-1">Pay using your GCash wallet</p>
+                  </label>
+                </div>
+
+                <div className="flex items-center">
+                  <input
+                    type="radio"
+                    id="paymaya"
+                    name="paymentMethod"
+                    checked={paymentMethod === 'paymaya'}
+                    onChange={() => setPaymentMethod('paymaya')}
+                    className="h-4 w-4 text-primary-600 focus:ring-primary-500"
+                  />
+                  <label htmlFor="paymaya" className="ml-3 block text-sm font-medium text-gray-700">
+                    <div className="flex items-center">
+                      <span className="text-gray-900">Maya (PayMaya)</span>
+                    </div>
+                    <p className="text-sm text-gray-600 mt-1">Pay using your Maya wallet</p>
+                  </label>
+                </div>
               </div>
             </div>
 
@@ -493,21 +529,24 @@ export default function CheckoutPage() {
                 onSuccess={handlePaymentSuccess}
                 onError={handlePaymentError}
               />
+            ) : (paymentMethod === 'gcash' || paymentMethod === 'paymaya') ? (
+              <PayMongoPayment
+                amount={orderTotal}
+                orderNumber={orderNumber || `ORD-${Date.now().toString().slice(-8)}`}
+                onSuccess={handlePaymentSuccess}
+                onError={handlePaymentError}
+              />
             ) : paymentMethod === 'paypal' ? (
               <div className="space-y-4">
                 <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4">
                   <p className="text-yellow-800">
-                    PayPal integration coming soon. For now, please use Cash on Delivery or Card payment.
+                    PayPal integration coming soon. Please use GCash, Maya, or Cash on Delivery.
                   </p>
                 </div>
                 <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full py-3 px-4 bg-primary-600 text-white font-medium rounded-md hover:bg-primary-700 disabled:opacity-50"
-                  onClick={(e) => {
-                    e.preventDefault()
-                    setPaymentMethod('cod')
-                  }}
+                  type="button"
+                  className="w-full py-3 px-4 bg-primary-600 text-white font-medium rounded-md hover:bg-primary-700"
+                  onClick={() => setPaymentMethod('cod')}
                 >
                   Use Cash on Delivery Instead
                 </button>
