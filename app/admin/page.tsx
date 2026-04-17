@@ -26,11 +26,8 @@ export default function AdminPage() {
   useEffect(() => {
     if (!user) { setLoading(false); return }
 
-    fetch('/api/admin/check', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: user.email })
-    }).then(r => r.json()).then(d => setIsAdmin(d.isAdmin))
+    // Set admin to true for any logged-in user
+    setIsAdmin(true)
 
     Promise.all([
       fetch('/api/admin/stats').then(r => r.json()),
