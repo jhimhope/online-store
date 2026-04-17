@@ -13,6 +13,7 @@ export default function AdminPage() {
   const [stats, setStats] = useState<any>(null)
   const [orders, setOrders] = useState<any[]>([])
   const [products, setProducts] = useState<any[]>([])
+  const [users, setUsers] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [updatingOrder, setUpdatingOrder] = useState<string | null>(null)
   const [showModal, setShowModal] = useState(false)
@@ -26,10 +27,12 @@ export default function AdminPage() {
       fetch('/api/admin/stats').then(r => r.json()),
       fetch('/api/admin/orders').then(r => r.json()),
       fetch('/api/admin/products').then(r => r.json()),
-    ]).then(([s, o, p]) => {
+      fetch('/api/admin/users').then(r => r.json()),
+    ]).then(([s, o, p, u]) => {
       setStats(s)
       setOrders(o.orders || [])
       setProducts(p.products || [])
+      setUsers(u.users || [])
       setLoading(false)
     })
   }, [])
@@ -139,7 +142,7 @@ export default function AdminPage() {
     )
   }
 
-  const tabs = ['overview', 'orders', 'products', 'inventory', 'sales report']
+  const tabs = ['overview', 'orders', 'products', 'inventory', 'sales report', 'users']
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -503,6 +506,74 @@ export default function AdminPage() {
                     {products.length === 0 && (
                       <tr><td colSpan={4} className="px-4 py-8 text-center text-gray-700">No products found.</td></tr>
                     )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* USERS TAB */}
+        {!loading && activeTab === 'users' && (
+          <div className="space-y-6">
+            {/* Users Summary */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="bg-white rounded-lg p-5 shadow-sm">
+                <p className="text-sm text-gray-600">Total Users</p>
+                <p className="text-3xl font-bold text-gray-900 mt-1">{users.length}</p>
+              </div>
+              <div className="bg-white rounded-lg p-5 shadow-sm">
+                <p className="text-sm text-gray-600">Confirmed Accounts</p>
+                <p className="text-3xl font-bold text-green-600 mt-1">{users.filter(u => u.confirmed).length}</p>
+              </div>
+              <div className="bg-white rounded-lg p-5 shadow-sm">
+                <p className="text-sm text-gray-600">Users with Orders</p>
+                <p className="text-3xl font-bold text-blue-600 mt-1">{users.filter(u => u.total_orders > 0).length}</p>
+              </div>
+            </div>
+
+            {/* Users Table */}
+            <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+              <div className="p-4 border-b">
+                <h2 className="text-lg font-semibold text-gray-900">All Users ({users.length})</h2>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="text-left px-4 py-3 text-gray-700">Email</th>
+                      <th className="text-left px-4 py-3 text-gray-700">Joined</th>
+                      <th className="text-left px-4 py-3 text-gray-700">Last Login</th>
+                      <th className="text-center px-4 py-3 text-gray-700">Status</th>
+                      <th className="text-right px-4 py-3 text-gray-700">Orders</th>
+                      <th className="text-right px-4 py-3 text-gray-700">Total Spent</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {users.length === 0 ? (
+                      <tr><td colSpan={6} className="px-4 py-8 text-center text-gray-500">No users found.</td></tr>
+                    ) : users.map(user => (
+                      <tr key={user.id} className="border-t hover:bg-gray-50">
+                        <td className="px-4 py-3 text-gray-900">{user.email}</td>
+                        <td className="px-4 py-3 text-gray-700">
+                          {new Date(user.created_at).toLocaleDateString()}
+                        </td>
+                        <td className="px-4 py-3 text-gray-700">
+                          {user.last_sign_in ? new Date(user.last_sign_in).toLocaleDateString() : '—'}
+                        </td>
+                        <td className="px-4 py-3 text-center">
+                          {user.confirmed ? (
+                            <span className="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">Confirmed</span>
+                          ) : (
+                            <span className="px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800">Pending</span>
+                          )}
+                        </td>
+                        <td className="px-4 py-3 text-right text-gray-900">{user.total_orders}</td>
+                        <td className="px-4 py-3 text-right font-medium text-gray-900">
+                          ₱{user.total_spent.toFixed(2)}
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
