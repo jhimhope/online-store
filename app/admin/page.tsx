@@ -154,7 +154,7 @@ export default function AdminPage() {
     )
   }
 
-  if (isAdmin === null && !loading) {
+  if (isAdmin === null) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <p className="text-gray-600">Verifying admin access...</p>
