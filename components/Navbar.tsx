@@ -104,18 +104,6 @@ export default function Navbar() {
                           Admin Dashboard
                         </Link>
                       )}
-                      {isSupervisor && (
-                        <Link
-                          href="/staff"
-                          className="flex items-center px-4 py-2 text-sm text-blue-700 hover:bg-blue-50 font-medium"
-                          onClick={() => setIsProfileOpen(false)}
-                        >
-                          <svg className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                          </svg>
-                          Staff Orders
-                        </Link>
-                      )}
                       <Link
                         href="/orders"
                         className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
